@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from gilded_rose import Item, GildedRose
+from gilded_rose_legacy import Item, GildedRose
 
 def assert_items_eq(items_actual, items_EXPECTED):
    if len(items_EXPECTED) != len(items_actual):
@@ -50,6 +50,15 @@ class test_normal_item(unittest.TestCase):
    def test_expired_update(self):
       assert_items_eq(
          GildedRose([
+            Item("foo", -1,  4),
+         ]).update_quality(), # returns items
+         [
+            Item("foo", -2,  2),
+         ],
+      )
+   def test_just_expired_update(self):
+      assert_items_eq(
+         GildedRose([
             Item("foo",  0,  4),
          ]).update_quality(), # returns items
          [
@@ -62,11 +71,15 @@ class test_normal_item(unittest.TestCase):
             Item("foo",  1,  0),
             Item("foo",  0,  1), # single overflow
             Item("foo",  0,  0), # double overflow
+            Item("foo", -1,  1), # single overflow
+            Item("foo", -1,  0), # double overflow
          ]).update_quality(), # returns items
          [
             Item("foo",  0,  0),
             Item("foo", -1,  0),
             Item("foo", -1,  0),
+            Item("foo", -2,  0),
+            Item("foo", -2,  0),
          ],
       )
 
@@ -83,6 +96,15 @@ class test_aged_brie(unittest.TestCase):
    def test_expired_update(self):
       assert_items_eq(
          GildedRose([
+            Item("Aged Brie", -1,  4),
+         ]).update_quality(), # returns items
+         [
+            Item("Aged Brie", -2,  6),
+         ],
+      )
+   def test_just_expired_update(self):
+      assert_items_eq(
+         GildedRose([
             Item("Aged Brie",  0,  4),
          ]).update_quality(), # returns items
          [
@@ -95,11 +117,15 @@ class test_aged_brie(unittest.TestCase):
             Item("Aged Brie",  1, 50),
             Item("Aged Brie",  0, 49), # single overflow
             Item("Aged Brie",  0, 50), # double overflow
+            Item("Aged Brie", -1, 49), # single overflow
+            Item("Aged Brie", -1, 50), # double overflow
          ]).update_quality(), # returns items
          [
             Item("Aged Brie",  0, 50),
             Item("Aged Brie", -1, 50),
             Item("Aged Brie", -1, 50),
+            Item("Aged Brie", -2, 50),
+            Item("Aged Brie", -2, 50),
          ],
       )
 
@@ -165,6 +191,15 @@ class test_backstage_pass(unittest.TestCase):
    def test_expired_update(self):
       assert_items_eq(
          GildedRose([
+            Item("Backstage passes to a TAFKAL80ETC concert", -1, 19),
+         ]).update_quality(), # returns items
+         [
+            Item("Backstage passes to a TAFKAL80ETC concert", -2, 0),
+         ]
+      )
+   def test_just_expired_update(self):
+      assert_items_eq(
+         GildedRose([
             Item("Backstage passes to a TAFKAL80ETC concert",  0, 19),
          ]).update_quality(), # returns items
          [
@@ -188,84 +223,6 @@ class test_backstage_pass(unittest.TestCase):
             Item("Backstage passes to a TAFKAL80ETC concert",  4, 50),
             Item("Backstage passes to a TAFKAL80ETC concert",  4, 50),
             Item("Backstage passes to a TAFKAL80ETC concert",  4, 50),
-         ],
-      )
-
-class test_conjured(unittest.TestCase):
-   def test_standard_update(self):
-      assert_items_eq(
-         GildedRose([
-            Item("Conjured",  4, 19),
-         ]).update_quality(), # returns items
-         [
-            Item("Conjured",  3, 17),
-         ]
-      )
-   def test_expired_update(self):
-      assert_items_eq(
-         GildedRose([
-            Item("Conjured",  0, 19),
-         ]).update_quality(), # returns items
-         [
-            Item("Conjured", -1, 15),
-         ]
-      )
-   def test_minimum_0(self):
-      assert_items_eq(
-         GildedRose([
-            Item("Conjured",  1,  1), # single overflow
-            Item("Conjured",  1,  0), # double overflow
-            Item("Conjured",  0,  3), # single overflow
-            Item("Conjured",  0,  2), # double overflow
-            Item("Conjured",  0,  1), # triple overflow
-            Item("Conjured",  0,  0), # quadruple overflow
-         ]).update_quality(), # returns items
-         [
-            Item("Conjured",  0,  0),
-            Item("Conjured",  0,  0),
-            Item("Conjured", -1,  0),
-            Item("Conjured", -1,  0),
-            Item("Conjured", -1,  0),
-            Item("Conjured", -1,  0),
-         ],
-      )
-
-class test_conjured_foo(unittest.TestCase):
-   def test_standard_update(self):
-      assert_items_eq(
-         GildedRose([
-            Item("Conjured foo",  4, 19),
-         ]).update_quality(), # returns items
-         [
-            Item("Conjured foo",  3, 17),
-         ]
-      )
-   def test_expired_update(self):
-      assert_items_eq(
-         GildedRose([
-            Item("Conjured foo",  0, 19),
-         ]).update_quality(), # returns items
-         [
-            Item("Conjured foo", -1, 15),
-         ]
-      )
-   def test_minimum_0(self):
-      assert_items_eq(
-         GildedRose([
-            Item("Conjured foo",  1,  1), # single overflow
-            Item("Conjured foo",  1,  0), # double overflow
-            Item("Conjured foo",  0,  3), # single overflow
-            Item("Conjured foo",  0,  2), # double overflow
-            Item("Conjured foo",  0,  1), # triple overflow
-            Item("Conjured foo",  0,  0), # quadruple overflow
-         ]).update_quality(), # returns items
-         [
-            Item("Conjured foo",  0,  0),
-            Item("Conjured foo",  0,  0),
-            Item("Conjured foo", -1,  0),
-            Item("Conjured foo", -1,  0),
-            Item("Conjured foo", -1,  0),
-            Item("Conjured foo", -1,  0),
          ],
       )
 

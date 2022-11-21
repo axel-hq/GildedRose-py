@@ -2,6 +2,7 @@
 # Copied from gilded_rose.py for posterity
 
 class GildedRose(object):
+
     def __init__(self, items):
         self.items = items
 
@@ -34,9 +35,12 @@ class GildedRose(object):
                 else:
                     if item.quality < 50:
                         item.quality = item.quality + 1
+        return self.items
+
 
 class Item:
     def __init__(self, name, sell_in, quality):
         self.name = name
         self.sell_in = sell_in
         self.quality = quality
+
